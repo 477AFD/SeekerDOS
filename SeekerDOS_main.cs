@@ -69,7 +69,7 @@ class Dos
     }
     private string getFileExtension(string w)
     {
-        string[] c = w.Split('.')
+        string[] c = w.Split('.');
         return c[c.Length - 1];
     }
     public bool ParseCmd(string w, string cdir)
@@ -238,7 +238,7 @@ class Dos
                             }
                             Console.WriteLine($"\n\n=END==========================================\n\nExit code: {app.Run($"{cdir}/{arg0}", apparg, cdir)}");
                         }
-                    else if File.Exists($"/bin/{arg0}"))
+                    else if (File.Exists($"/bin/{arg0}"))
                         {
                             Application app = new Application();
                             Console.WriteLine("\n=BEGIN========================================\n\n");
