@@ -41,4 +41,5 @@ A DOS-like Shell for use with CodeChum and its Playground feature
 * `read <filename>`
 * `copy <filename> <absolute file path>`
 * `cd <folder name>`
-* Anything inside the /bin directory (available in `SeekerDOS\_main.cs`, will be released in Petuni a2.2)
+* Anything inside the /bin directory (available in `SeekerDOS_main.cs`, will be released in Petuni a2.2)
+
