@@ -2,8 +2,8 @@
 
 ========================================================
 
-SeekerDOS Petuni 
-Version 2.1 ALPHA
+SeekerDOS Puniper 
+Version 3.0 ALPHA
 Made by 477AFD for CodeChum
 
 ========================================================
@@ -59,6 +59,7 @@ public static class GbVars
     public static bool hiddenFiles = true;
     public static char del = ' ';
     public static string shellDir = "/bin/sh";
+    public static int exitCode = 0;
 }
 
 class Dos
@@ -94,10 +95,13 @@ class Dos
                 try
                 {
                     bool dh = true;
-                    if (arg1 == "--hidden" || arg1 == "-h" || arg1 == "-hidden")
+                    if (arg1 == "--hidden" || arg1 == "-h" || arg1 == "-hidden" ||
+                        arg2 == "--hidden" || arg2 == "-h" || arg2 == "-hidden")
                         dh = false;
                     else
                         dh = GbVars.hiddenFiles;
+                    if (arg1 != "--hidden" && arg1 != "-h" && arg1 != "-hidden" && arg1 != "")
+                        cdir = arg1;
                     string[] directories = Directory.GetDirectories(cdir);
                     Console.WriteLine("Contents:\n");
                     foreach (var d in System.IO.Directory.GetDirectories(cdir))
@@ -206,7 +210,60 @@ class Dos
                 Console.WriteLine("read - Read the contents of the file and display it.");
                 Console.WriteLine("copy - Copies a file to its absolute destination. Currently unsupported by CodeChum.");
                 Console.WriteLine("help - Displays this help.\n");
+                Console.WriteLine("cmds - Display commands available in UNIX.");
                 Console.WriteLine("To run Windows or UNIX software, just type its name or file path.");
+                break;
+            case "clear":
+            case "cls":
+                Console.Clear();
+                break;
+            /*case "charlist":
+                for (byte i = 0; i < 256; i += 16)
+                {
+                    for (byte l = i; l < i + 16; l++) Console.Write($"{(char)l}\t");
+                    Console.WriteLine();
+                }
+                break;*/
+            case "sh_commands":
+            case "cmds":
+                int p = 0;
+                foreach (var f in System.IO.Directory.GetFiles("/bin"))
+                    {
+                        var fileName = new FileInfo(f).Name;
+                        if (fileName[0] == '.')
+                            continue;
+                        else
+                        {
+                            if (p <= 2)
+                                if (fileName.Length < 8)
+                                    Console.Write(fileName + "\t\t\t\t\t");
+                                else if (fileName.Length < 16)
+                                    Console.Write(fileName + "\t\t\t\t");
+                                else if (fileName.Length < 24)
+                                    Console.Write(fileName + "\t\t\t");
+                                else if (fileName.Length < 32)
+                                    Console.Write(fileName + "\t\t");
+                                else
+                                    Console.Write(fileName + "\t");  
+                            else
+                            {
+                                Console.WriteLine();
+                                if (fileName.Length < 8)
+                                    Console.Write(fileName + "\t\t\t\t\t");
+                                else if (fileName.Length < 16)
+                                    Console.Write(fileName + "\t\t\t\t");
+                                else if (fileName.Length < 24)
+                                    Console.Write(fileName + "\t\t\t");
+                                else if (fileName.Length < 32)
+                                    Console.Write(fileName + "\t\t");
+                                else
+                                    Console.Write(fileName + "\t");
+                                p = 1;
+                            }
+                            p++;
+                        }
+                    }
+                    Console.WriteLine();
                 break;
             case "exit":
             case "quit":
@@ -216,13 +273,13 @@ class Dos
                     if (File.Exists(arg0))
                         {
                             Application app = new Application();
-                            Console.WriteLine("\n=BEGIN========================================\n\n");
+                            //Console.WriteLine("\n=BEGIN========================================\n\n");
                             string apparg = "";
                             for (int rr = 1; rr < cmdstring.Length; rr++)
                             {
                                 apparg += $"{cmdstring[rr]} ";
                             }
-                            Console.WriteLine($"\n\n=END==========================================\n\nExit code: {app.Run(arg0, apparg, cdir)}");
+                            GbVars.exitCode = app.Run(arg0, apparg, cdir);
                         }
                     else
                         Console.WriteLine("Invalid command or file name.");
@@ -230,24 +287,24 @@ class Dos
                     if (File.Exists($"{cdir}/{arg0}"))
                         {
                             Application app = new Application();
-                            Console.WriteLine("\n=BEGIN========================================\n\n");
+                            //Console.WriteLine("\n=BEGIN========================================\n\n");
                             string apparg = "";
                             for (int rr = 1; rr < cmdstring.Length; rr++)
                             {
                                 apparg += $"{cmdstring[rr]} ";
                             }
-                            Console.WriteLine($"\n\n=END==========================================\n\nExit code: {app.Run($"{cdir}/{arg0}", apparg, cdir)}");
+                            GbVars.exitCode = app.Run($"{cdir}/{arg0}", apparg, cdir);
                         }
                     else if (File.Exists($"/bin/{arg0}"))
                         {
                             Application app = new Application();
-                            Console.WriteLine("\n=BEGIN========================================\n\n");
+                            //Console.WriteLine("\n=BEGIN========================================\n\n");
                             string apparg = "";
                             for (int rr = 1; rr < cmdstring.Length; rr++)
                             {
                                 apparg += $"{cmdstring[rr]} ";
                             }
-                            Console.WriteLine($"\n\n=END==========================================\n\nExit code: {app.Run($"/bin/{arg0}", apparg, cdir)}");
+                            GbVars.exitCode = app.Run($"/bin/{arg0}", apparg, cdir);
                         }
                     else
                         Console.WriteLine("Invalid command or file name.");
@@ -299,7 +356,7 @@ class Application
                 OSI_seeker.WaitForExit(); // Wait for the process to stop
             } catch (Exception w)
             {
-                Console.WriteLine("\"A seeker has been detected. Try debugging the source code to eliminate it.\" - Petuni");
+                Console.WriteLine("\"A seeker has been detected. Try debugging the source code to eliminate it.\" - Puniper");
                 outlist[i] = "Not available";
             }
         }
@@ -318,7 +375,17 @@ class TermProc
         string[] p = OSI.GetOSInfo();
         string[] q = p[1].Split('"');
         string PetuniOS = q[1];
-        Console.WriteLine($"SeekerDOS Petuni\nRunning on {PetuniOS}, version {p[0]}\nVersion a2.1\n\nType \"help\" for instructions.");
+        // ╔═╗║╚╝
+        // ÉÍ»ºÈ¼
+        Console.WriteLine("╔════════════════════════════════════════════════════════════════════════╗");
+        //Console.WriteLine("║                                                                        ║");
+        Console.WriteLine("║ SeekerDOS Puniper                                                      ║");
+        Console.WriteLine("║ Version a3.0                                                           ║");
+        Console.WriteLine("╚════════════════════════════════════════════════════════════════════════╝");
+        Console.WriteLine($"OS version: {PetuniOS}");
+        Console.WriteLine($"Kernel version: {p[0]}"); 
+        Console.WriteLine("======================================\n");
+        Console.WriteLine("\nType \"help\" for instructions.");
     }
     
     public void loop()
