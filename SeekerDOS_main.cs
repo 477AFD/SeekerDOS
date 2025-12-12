@@ -3,7 +3,7 @@
 ========================================================
 
 SeekerDOS Puniper 
-Version 3.0 ALPHA
+Version 3.01 ALPHA
 Made by 477AFD for CodeChum
 
 ========================================================
@@ -209,7 +209,7 @@ class Dos
                 Console.WriteLine("cd - Change the current directory.");
                 Console.WriteLine("read - Read the contents of the file and display it.");
                 Console.WriteLine("copy - Copies a file to its absolute destination. Currently unsupported by CodeChum.");
-                Console.WriteLine("help - Displays this help.\n");
+                Console.WriteLine("help - Displays this help.");
                 Console.WriteLine("cmds - Display commands available in UNIX.");
                 Console.WriteLine("To run Windows or UNIX software, just type its name or file path.");
                 break;
@@ -272,39 +272,45 @@ class Dos
                 if (arg0[0] == '/')
                     if (File.Exists(arg0))
                         {
-                            Application app = new Application();
-                            //Console.WriteLine("\n=BEGIN========================================\n\n");
+                            var app = new Application();
                             string apparg = "";
                             for (int rr = 1; rr < cmdstring.Length; rr++)
                             {
                                 apparg += $"{cmdstring[rr]} ";
                             }
                             GbVars.exitCode = app.Run(arg0, apparg, cdir);
+                            app = null;
+                            GC.Collect();
+                            GC.WaitForPendingFinalizers();
                         }
                     else
                         Console.WriteLine("Invalid command or file name.");
                 else
                     if (File.Exists($"{cdir}/{arg0}"))
                         {
-                            Application app = new Application();
-                            //Console.WriteLine("\n=BEGIN========================================\n\n");
+                            var app = new Application();
                             string apparg = "";
                             for (int rr = 1; rr < cmdstring.Length; rr++)
                             {
                                 apparg += $"{cmdstring[rr]} ";
                             }
                             GbVars.exitCode = app.Run($"{cdir}/{arg0}", apparg, cdir);
+                            app = null;
+                            GC.Collect();
+                            GC.WaitForPendingFinalizers();
                         }
                     else if (File.Exists($"/bin/{arg0}"))
                         {
-                            Application app = new Application();
-                            //Console.WriteLine("\n=BEGIN========================================\n\n");
+                            var app = new Application();
                             string apparg = "";
                             for (int rr = 1; rr < cmdstring.Length; rr++)
                             {
                                 apparg += $"{cmdstring[rr]} ";
                             }
                             GbVars.exitCode = app.Run($"/bin/{arg0}", apparg, cdir);
+                            app = null;
+                            GC.Collect();
+                            GC.WaitForPendingFinalizers();
                         }
                     else
                         Console.WriteLine("Invalid command or file name.");
@@ -343,6 +349,7 @@ class Application
         string[] outlist = new string[cmdseq];
         cmdlist[0] = @"/bin/uname"; arglist[0] = @"-r";
         cmdlist[1] = @"/bin/grep"; arglist[1] = @"-E 'PRETTY_NAME=' /etc/os-release";
+        //cmdlist[2] = @"/bin/"; arglist[2] = "";
         for (int i = 0; i < cmdseq; i++)
         {
             try {
@@ -356,7 +363,7 @@ class Application
                 OSI_seeker.WaitForExit(); // Wait for the process to stop
             } catch (Exception w)
             {
-                Console.WriteLine("\"A seeker has been detected. Try debugging the source code to eliminate it.\" - Puniper");
+                Console.WriteLine($"\"A seeker has been detected when running '{cmdlist[i]} {arglist[i]}'. Try debugging the source code to eliminate it.\"\n- Puniper");
                 outlist[i] = "Not available";
             }
         }
@@ -378,9 +385,8 @@ class TermProc
         // ╔═╗║╚╝
         // ÉÍ»ºÈ¼
         Console.WriteLine("╔════════════════════════════════════════════════════════════════════════╗");
-        //Console.WriteLine("║                                                                        ║");
         Console.WriteLine("║ SeekerDOS Puniper                                                      ║");
-        Console.WriteLine("║ Version a3.0                                                           ║");
+        Console.WriteLine("║ Version a3.01                                                          ║");
         Console.WriteLine("╚════════════════════════════════════════════════════════════════════════╝");
         Console.WriteLine($"OS version: {PetuniOS}");
         Console.WriteLine($"Kernel version: {p[0]}"); 
